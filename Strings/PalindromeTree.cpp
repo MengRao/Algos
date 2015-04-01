@@ -1,6 +1,6 @@
-// Palindrome tree. Useful structure to deal with palindromes in strings. O(N)
+// Palindrome tree. Useful structure to deal with palindromes in strings, constructed in O(N)
 //
-// This code finds all distinct Palindrome substrings and count the number of occurrences in O(N)
+// This code finds all distinct palindrome substrings and count their number of occurrences in O(N)
 //
 #include <stdio.h>
 #include <string.h>
