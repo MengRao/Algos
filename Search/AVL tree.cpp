@@ -1,8 +1,18 @@
 // AVL tree with insertion, deletion, searching and finding kth element time in O(lgn)
+
+struct AVLVALUE
+{
+	bool operator<(const AVLVALUE& rhs)
+	{
+		return key < rhs.key;
+	}
+	int key;
+};
+
 class AVLNode
 {
 public:
-	 AVLNode(int value, AVLNode *parent)
+	 AVLNode(AVLVALUE value, AVLNode *parent)
 		: v(value)
 		, p(parent)
 		, left(NULL)
@@ -12,7 +22,7 @@ public:
 	{
 	}
 
-	int v;
+	AVLVALUE v;
 	AVLNode *p;
 	AVLNode *left;
 	AVLNode *right;
@@ -114,7 +124,7 @@ void balanceAfterInsert(AVLNode *n, AVLNode **proot)
  }  // Possibly up to the root
 }
 
-void AVLinsert(int num, AVLNode **proot)
+void AVLinsert(AVLVALUE num, AVLNode **proot)
 {
 	AVLNode **pcur = proot;
 	AVLNode *p = NULL;
@@ -195,50 +205,39 @@ void balanceAfterDel(AVLNode *p, AVLNode **pn, AVLNode **proot)
 	 }  // Possibly up to the root
 }
 
-// return true: found and deleted; false: not found
-bool AVLdelete(int num, AVLNode **proot)
+void AVLdeleteNode(AVLNode* cur, AVLNode **proot)
 {
-	AVLNode **pcur = proot;
-	AVLNode *cur;
-	while (*pcur)
-	{
-		cur = *pcur;
-		if (num == cur->v)
-			break;
-		if (num < cur->v)
-		{
-			pcur = &cur->left;
-		}
-		else
-		{
-			pcur = &cur->right;
-		}
-	}
-	if (!*pcur)
-		return false;
-	cur = *pcur;
 	if (cur->left && cur->right)
 	{
+		AVLNode* old = cur;
 		if (cur->balancedFactor == 1)
 		{
-			pcur = &cur->left;
-			while ((*pcur)->right)
-				pcur = &(*pcur)->right;
+			cur = cur->left;
+			while (cur->right)
+				cur = cur->right;
 		}
 		else
 		{
-			pcur = &cur->right;
-			while ((*pcur)->left)
-				pcur = &(*pcur)->left;
+			cur = cur->right;
+			while (cur->left)
+				cur = cur->left;
 		}
-		cur->v = (*pcur)->v;
-		cur = *pcur;
+		old->v = cur->v;
 	}
 	AVLNode *child = cur->left;
 	if (!child)
 		child = cur->right;
-	*pcur = child;
+	AVLNode **pcur = proot;
 	AVLNode *p = cur->p;
+	if (p)
+	{
+		if (p->left == cur)
+			pcur = &p->left;
+		else
+			pcur = &p->right;
+	}
+	*pcur = child;
+	
 	if (child)
 		child->p = p;
 	while (p)
@@ -248,6 +247,24 @@ bool AVLdelete(int num, AVLNode **proot)
 	}
 	balanceAfterDel(cur->p, pcur, proot);
 	delete cur;
+}
+
+// return true: found and deleted; false: not found
+bool AVLdelete(int key, AVLNode **proot)
+{
+	AVLNode *cur = *proot;
+	while (cur)
+	{
+		if (key == cur->v.key)
+			break;
+		if (key < cur->v.key)
+			cur = cur->left;
+		else
+			cur = cur->right;
+	}
+	if (!cur)
+		return false;
+	AVLdeleteNode(cur, proot);
 	return true;
 }
 
