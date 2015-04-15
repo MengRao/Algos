@@ -33,6 +33,11 @@ struct STUpdate
 		: change(0)
 	{
 	}
+
+	STUpdate(int ch)
+		: change(ch)
+	{
+	}
 	// if has pending update
 	operator bool()
 	{

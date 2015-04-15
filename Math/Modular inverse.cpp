@@ -19,3 +19,23 @@ int invMod(int a, int m) {
         return 0; // no inverse exists
 	return (x + m) % m;
 }
+
+
+int power(long long a, int p, int m)
+{
+	long long res = 1;
+	while(p)
+	{
+		if (p%2)
+			res = res * a %MOD;
+		a = a*a%MOD;
+		p /= 2;
+	}
+	return (int)res;
+}
+
+// Using Euler's theorem
+int invMod2(int a, int m)
+{
+	return power(a, m-2, m);
+}
