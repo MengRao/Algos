@@ -7,7 +7,7 @@ struct GetID {
 	map<string, int> ids;
 	int nid = {0};
 	void clear() { ids.clear(); nid=0;}
-	int size() const { return nid); }
+	int size() const { return nid; }
 	int get(string&& x) {
 		auto ret = ids.emplace(forward<string>(x), nid);
 		nid += ret.second;
