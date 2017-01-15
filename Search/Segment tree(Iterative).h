@@ -1,11 +1,11 @@
 /*
 An optimized lazy propagation(support non-commutative update) segment tree implementation using only iteration.
-It has the same time complexity as its recursion counterpart(check "Segment tree.h"):
+It has the same time complexity as its recursive counterpart(check "Segment tree.h"):
 building tree in O(n), range query and range update in O(log n).
-But it has a much lower constant factor so it's faster than the recursion version, you can test yourself.
-In addition, it's more compact in space usage: only N*3 is required including lazy update array, compared with N*8 for recursive verson.
-Lastly, user interface is improved in this version.
-So this version can completey replace the recursion version, hurray!
+But it has a much lower constant factor so it's faster than the recursive version, you can test yourself.
+In addition, it's more compact in space usage: only N*3 is required including lazy update array, compared with N*8 for recursive version.
+Lastly, the user interface is improved in this version.
+So this version can completely replace the recursive one, hurray!
 
 Usage:
 1) Change implementation of struct STUpdate and STNode, keeping interface the same.
