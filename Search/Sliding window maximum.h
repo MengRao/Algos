@@ -19,6 +19,7 @@ void go()
     while (qj >= qi && q[qj] < a[i])
       qj--;
     q[++qj] = a[i];
+    // now q[qi] is max for range from a[i - k + 1] to a[i], it can be saved elsewhere rather than in-place
     if (a[i - k + 1] == q[qi])
       qi++;
     else
