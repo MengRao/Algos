@@ -28,10 +28,10 @@ struct GetID2 {
 		if (ret.second)
 			values.push_back(ret.first->first);
 
-		return ret.first.second;
+		return ret.first->second;
 	}
 
-	string& getStr(int id) {
+	string& getstr(int id) {
 		return values[id];
 	}
 };
