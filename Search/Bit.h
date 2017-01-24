@@ -30,3 +30,21 @@ long long hsb(long long n) {
   int loc = hsb_loc(n);
   return 1LL << loc;
 }
+
+#ifdef WIN32
+int popcnt(int n) {
+  return __popcnt(n);
+}
+
+int popcnt(long long n) {
+  return __popcnt64(n);
+}
+#else
+int popcnt(int n) {
+  return __builtin_popcount(n);
+}
+
+int popcnt(long long n) {
+  return __builtin_popcountll(n);
+}
+#endif
