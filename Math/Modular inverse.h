@@ -26,10 +26,10 @@ int power(long long a, int p, int m)
 	long long res = 1;
 	while(p)
 	{
-		if (p%2)
-			res = res * a %MOD;
-		a = a*a%MOD;
-		p /= 2;
+    if (p & 1)
+      res = res * a % m;
+    a = a * a % m;
+		p >>= 1;
 	}
 	return (int)res;
 }
