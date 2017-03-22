@@ -6,16 +6,15 @@
 using namespace std;
 
 
-#define MAXN 1000
-#define MAXM 1000
+const int N = 100;
+const int M = 100;
 
-vector<int> edge[MAXN];
-int matchR[MAXM];
-int Rvisited[MAXM], cookie;
+vector<int> g[N];
+int matchR[M], Rvisited[M], cookie;
 
 bool dfs(int i)
 {
-	for(auto el:edge[i])
+	for(auto el:g[i])
 	{
 		if (Rvisited[el] == cookie)
 			continue;
@@ -23,10 +22,10 @@ bool dfs(int i)
 		if (matchR[el] < 0 || dfs(matchR[el]))
 		{
 			matchR[el] = i;
-			return true;
+			return 1;
 		}
 	}
-	return false;
+	return 0;
 }
 
 int maximum_bipartite_match(int n)
@@ -36,8 +35,7 @@ int maximum_bipartite_match(int n)
 	for (int i = 0; i < n;i++)
 	{
 		cookie++;
-		if(dfs(i))
-			res++;
+    res += dfs(i);
 	}
 
 	return res;
