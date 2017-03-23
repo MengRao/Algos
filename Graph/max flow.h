@@ -17,25 +17,25 @@ struct MaxFlow {
   int last[N], used[N], level[N];
   int q[N], qi, qj;
   int cap[M * 2], to[M * 2], prev[M * 2];
-  int n, m, s, t;
+  int n, m;
 
-  MaxFlow(int _n, int _s, int _t) : n(_n), m(0), s(_s), t(_t) {
+  MaxFlow(int _n) : n(_n), m(0) {
     rep(i, n) last[i] = -1;
   }
 
-  // c2: capacity on edge y->x,
-  // if edge y->x should never be used(e.g: to source or from sink),
-  // then speed up algo by removing it from the graph
+  // c2: capacity on reverse edge y->x,
+  // if edge y->x should never be used(e.g: to source or from sink or for vertex capacity),
+  // then set c2 to -1 to speed up algo by removing the reverse edge from the graph
   void add(int x, int y, int c, int c2 = 0) {
     cap[m] = c; to[m] = y; prev[m] = last[x]; last[x] = m; m++;
-    cap[m] = c2;
-    if (x != s && y != t) {
-      to[m] = x; prev[m] = last[y]; last[y] = m;
+    cap[m] = 0; // make it easier to clear flow
+    if (c2 >= 0) {
+      cap[m] = c2; to[m] = x; prev[m] = last[y]; last[y] = m;
     }
     m++;
   }
 
-  bool bfs() {
+  bool bfs(int s, int t) {
     rep(i, n) level[i] = -1;
     qi = qj = 0;
     level[s] = 0;
@@ -64,10 +64,10 @@ struct MaxFlow {
     return f;
   }
 
-  int maxFlow() {
+  int maxFlow(int s, int t) {
     int ans = 0;
-    while (bfs()) {
-      rep(i, n)used[i] = last[i];
+    while (bfs(s, t)) {
+      rep(i, n) used[i] = last[i];
       ans += dfs(s, inf);
     }
     return ans;
