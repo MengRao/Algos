@@ -19,7 +19,9 @@ struct MaxFlow {
   int cap[M * 2], to[M * 2], prev[M * 2];
   int n, m;
 
-  MaxFlow(int _n) : n(_n), m(0) {
+  void init(int _n) {
+    n = _n;
+    m = 0;
     rep(i, n) last[i] = -1;
   }
 
@@ -52,11 +54,11 @@ struct MaxFlow {
     return 0;
   }
 
-  int dfs(int v, int maxf) {
+  int dfs(int v, int t, int maxf) {
     if (v == t) return maxf;
     int f = 0;
     for (int i = used[v]; i >= 0; used[v] = i = prev[i]) if (level[to[i]] > level[v] && cap[i]) {
-      int ret = dfs(to[i], min(maxf - f, cap[i]));
+      int ret = dfs(to[i], t, min(maxf - f, cap[i]));
       cap[i] -= ret;
       cap[i ^ 1] += ret;
       if ((f += ret) == maxf) break;
@@ -68,9 +70,9 @@ struct MaxFlow {
     int ans = 0;
     while (bfs(s, t)) {
       rep(i, n) used[i] = last[i];
-      ans += dfs(s, inf);
+      ans += dfs(s, t, inf);
     }
     return ans;
   }
 
-};
+} mf;
