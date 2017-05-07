@@ -20,16 +20,28 @@ int hsb_loc(long long n) {
 }
 #endif
 
-// get highest set bit of n, undefined if n is 0
-int hsb(int n) {
-  int loc = hsb_loc(n);
-  return 1 << loc;
+#ifdef WIN32
+int lsb_loc(int n) {
+  unsigned long index;
+  _BitScanForward(&index, n);
+  return index;
 }
 
-long long hsb(long long n) {
-  int loc = hsb_loc(n);
-  return 1LL << loc;
+int lsb_loc(long long n) {
+  unsigned long index;
+  _BitScanForward64(&index, n);
+  return index;
 }
+#else
+int lsb_loc(int n) {
+  return __builtin_ctz(n);
+}
+
+int lsb_loc(long long n) {
+  return __builtin_ctzll(n);
+}
+#endif
+
 
 #ifdef WIN32
 int popcnt(int n) {
