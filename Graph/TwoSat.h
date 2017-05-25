@@ -36,7 +36,7 @@ struct TwoSat {
 	int dfs(int i) {
 		int low = id[i] = ++time, x; z.push_back(i);
 		fore(e, gr[i]) if (!comp[e])
-			low = min(low, id[e] ?: dfs(e));
+			low = min(low, id[e] ? id[e] : dfs(e));
 		if (low == id[i]) do {
 			x = z.back(); z.pop_back();
 			comp[x] = low;
