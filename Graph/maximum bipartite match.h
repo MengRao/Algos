@@ -6,38 +6,45 @@
 using namespace std;
 
 
-const int N = 100;
-const int M = 100;
+struct MBM {
+  vector<vector<int>> g; // size nleft
+  vector<int> matchR, Rvisited; // size nright
+  int time;
 
-vector<int> g[N];
-int matchR[M], Rvisited[M], cookie;
+  void init(int nleft, int nright) {
+    time = 0;
+    g.assign(nleft, vector<int>());
+    matchR.assign(nright, -1);
+    Rvisited.assign(nright, 0);
+  }
 
-bool dfs(int i)
-{
-	for(auto el:g[i])
-	{
-		if (Rvisited[el] == cookie)
-			continue;
-		Rvisited[el] = cookie;
-		if (matchR[el] < 0 || dfs(matchR[el]))
-		{
-			matchR[el] = i;
-			return 1;
-		}
-	}
-	return 0;
-}
+  void add(int left, int right) {
+    g[left].push_back(right);
+  }
 
-int maximum_bipartite_match(int n)
-{
-	memset(matchR, -1, sizeof(matchR));
-	int res = 0;
-	for (int i = 0; i < n;i++)
-	{
-		cookie++;
-    res += dfs(i);
-	}
+  bool dfs(int i)
+  {
+    for (auto el : g[i])
+    {
+      if (Rvisited[el] == time)
+        continue;
+      Rvisited[el] = time;
+      if (matchR[el] < 0 || dfs(matchR[el]))
+      {
+        matchR[el] = i;
+        return 1;
+      }
+    }
+    return 0;
+  }
 
-	return res;
-}
-
+  int solve() {
+    int res = 0;
+    int n = g.size();
+    for (int i = 0; i < n; i++) {
+      time++;
+      res += dfs(i);
+    }
+    return res;
+  }
+};
