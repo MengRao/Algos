@@ -10,35 +10,45 @@ template<typename T1, typename T2> void Max(T1& a, T2 b) { a = max(a, (T1)b); }
 template<typename T1, typename T2> void Min(T1& a, T2 b) { a = min(a, (T1)b); }
 
 struct MaxFlow {
-  static const int N = 100; // num of vertices
-  static const int M = 1000; // num of edges
   static const int inf = 1e9;
 
-  int last[N], used[N], level[N];
-  int q[N], qi, qj;
-  int cap[M * 2], to[M * 2], prev[M * 2];
-  int n, m;
+  vector<int> last, used, level, q, cap, to, prev;
+  int n, qi, qj;
 
-  void init(int _n) {
+  // _n: number of vertexes
+  // m: number of edges
+  void init(int _n, int m=0) {
     n = _n;
-    m = 0;
-    rep(i, n) last[i] = -1;
+    last.assign(n, -1);
+    q.resize(n);
+    cap.clear();
+    to.clear();
+    prev.clear();
+    if(m>0){
+      cap.reserve(m*2);
+      to.reserve(m*2);
+      prev.reserve(m*2);
+    }
   }
 
   // c2: capacity on reverse edge y->x,
   // if edge y->x should never be used(e.g: to source or from sink or for vertex capacity),
   // then set c2 to -1 to speed up algo by removing the reverse edge from the graph
   void add(int x, int y, int c, int c2 = 0) {
-    cap[m] = c; to[m] = y; prev[m] = last[x]; last[x] = m; m++;
-    cap[m] = 0; // make it easier to clear flow
-    if (c2 >= 0) {
-      cap[m] = c2; to[m] = x; prev[m] = last[y]; last[y] = m;
-    }
-    m++;
+    prev.push_back(last[x]);
+    last[x] = cap.size();
+    cap.push_back(c);
+    to.push_back(y);
+
+    prev.push_back(last[y]);
+    if(c2>=0) last[y] = cap.size();
+    else c2=0; // make it easier to clear flow
+    cap.push_back(c2);
+    to.push_back(x);
   }
 
   bool bfs(int s, int t) {
-    rep(i, n) level[i] = -1;
+	level.assign(n,-1);
     qi = qj = 0;
     level[s] = 0;
     q[qj++] = s;
@@ -69,10 +79,10 @@ struct MaxFlow {
   int maxFlow(int s, int t) {
     int ans = 0;
     while (bfs(s, t)) {
-      rep(i, n) used[i] = last[i];
+	  used = last;
       ans += dfs(s, t, inf);
     }
     return ans;
   }
 
-} mf;
+}; mf;
