@@ -1,13 +1,7 @@
 // An implementation of Dinic's algorithm
+#include <vector>
 using namespace std;
-#define ll long long
-#define rep(i,n) for(ll i=0;i<(ll)(n);++i)
-#define FOR(i,b,e) for(ll i=b;i<=(ll)(e);++i)
-#define FORR(i,b,e) for(ll i=b;i>=(ll)(e);--i)
-#define Fill(a,b) memset(a,b,sizeof(a))
-#define all(a) a.begin(),a.end()
-template<typename T1, typename T2> void Max(T1& a, T2 b) { a = max(a, (T1)b); }
-template<typename T1, typename T2> void Min(T1& a, T2 b) { a = min(a, (T1)b); }
+
 
 struct MaxFlow {
   static const int inf = 1e9;
@@ -48,7 +42,7 @@ struct MaxFlow {
   }
 
   bool bfs(int s, int t) {
-	level.assign(n,-1);
+    level.assign(n,-1);
     qi = qj = 0;
     level[s] = 0;
     q[qj++] = s;
@@ -79,7 +73,7 @@ struct MaxFlow {
   int maxFlow(int s, int t) {
     int ans = 0;
     while (bfs(s, t)) {
-	  used = last;
+      used = last;
       ans += dfs(s, t, inf);
     }
     return ans;
