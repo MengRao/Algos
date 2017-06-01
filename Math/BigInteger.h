@@ -14,6 +14,27 @@ struct BigInteger
 			unum /= base;
 		}
 	}
+  BigInteger(const string& str): sign(1){
+    int end = 0;
+    if(str[0]=='-'){
+      sign = -1;
+      end = 1;
+    }
+    int i = str.size()-1;
+    if(i==end&&str[i]=='0') return;
+
+    while(i>=end){
+      int v = 0;
+      int pos = 1;
+      while(pos<base && i>=end){
+        v += (str[i]-'0') * pos;
+        pos *= 10;
+        i--;
+      }
+      num.push_back(v);
+    }
+
+  }
 	static int absoluteCmp(const vector<uint32_t> &n1, const vector<uint32_t> &n2) {
 		if (n1.size() != n2.size()) {
       return n1.size() - n2.size();
@@ -233,6 +254,15 @@ struct BigInteger
 		*this = *this % other;
 		return *this;
 	}
+  BigInteger sqrt(){
+    BigInteger l = 0, r = *this;
+    while(l<=r){
+      BigInteger m = (l+r)/2;
+      if(m*m<=*this) l = m+1;
+      else r = m-1;
+    }
+    return r;
+  }
 	long long get() const 
 	{
 		long long res = 0;
