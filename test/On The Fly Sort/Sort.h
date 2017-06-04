@@ -1,5 +1,7 @@
 #include <iostream>
-#include <pair>
+#include <utility>
+#include <cassert>
+#include <map>
 
 
 using namespace std;
@@ -78,8 +80,8 @@ struct GetID {
   void clear() { ids.clear(); }
   int size() const { return (int)ids.size(); }
 
-  template<typename T>
-  uint get(T&& x) { return ids.emplace(forward<T>(x), size()).first->second; }
+  template<typename Type>
+  uint get(Type&& x) { return ids.emplace(forward<T>(x), size()).first->second; }
 };
 
 template <uint N>
