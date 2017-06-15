@@ -10,3 +10,5 @@ Search/GetID.h: A library to assign strings or objects of other types a unique i
 Search/UnionFind.h: A implemenation of union find disjoint set
 
 Search/Segment tree(Iterative).h: A general purpose segment tree template with lazy propagation(support non-commutative updates)
+
+Search/Treap.h: A Treap implementation that is configurable with toggles on lazy propagation, supporting size and sum. 
