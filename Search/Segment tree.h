@@ -1,154 +1,92 @@
 /**
 * Segment tree with lazy propagation. Building tree takes O(n) time, range query and range update takes O(logn).
 * It's a general template implementation that supports various operations on node combination(min, max, add, multiply...)
-* and various update fashion. You have to customize STNode(storing a query result), STUpdate(storing a pending update)
-* and the first five functions to make it useable.
-* Build tree: build_tree(1, 0, N-1)
-* Clear update: clear_update(1, 0, N-1). Note: memset(lazy, 0, sizeof(lazy)) would be faster if suitable
-* Update tree: update_tree(1, 0, N-1, i, j, value)
-* Query tree: query_tree(1, 0, N-1, i, j)
-* Actual space required by the tree = 2*2^ceil(log_2(n))
+* and various update fashion. You have to customize combine() and add() function appropriately.
 */
 
 
-struct STNode
-{
-  // default node indicates an out of range result, can be combined with another result or returned as result
-  STNode()
-    : v(0)
-  {
-  }
-  int v;
-};
+template<typename T, typename AD>
+struct ST{
+  vector<T> st;
+  vector<AD> lazy;
+  int n;
 
-struct STUpdate
-{
-  // default update should be converted to false
-  STUpdate()
-    : change(0)
-  {
+  static T combine(T a, T b) {
+    return a + b;
   }
 
-  STUpdate(int ch)
-    : change(ch)
-  {
-  }
-  // if has pending update
-  operator bool()
-  {
-    return change != 0;
-  }
-  int change;
-};
+  void add(int i, int sz, AD change) {
+    // update st[i]
+    if(change==1) st[i] = sz;
+    else if(change==2) st[i] = 0;
+    else st[i] = sz - st[i];
 
-// MAXNODE should be a least 2 * 2^ceil(log_2(N)), 4N is ok
-const int N = 20;
-const int MAXNODE = 4 * N;
-STNode tree[MAXNODE];
-STUpdate lazy[MAXNODE];
-
-int arr[N];
-
-void initNode(STNode& node, int i)
-{
-  node.v = arr[i];
-}
-
-void combineNode(STNode& target, STNode left, STNode right)
-{
-  target.v = max(left.v, right.v);
-}
-
-void addUpdate(STUpdate& target, STUpdate update)
-{
-  target.change += update.change;
-}
-
-void applyUpdate(STNode& target, int rangesize, STUpdate update)
-{
-  target.v += update.change;
-}
-
-
-
-/**
-* Build and init tree
-*/
-void build_tree(int node, int a, int b) {
-  if (a == b) { // Leaf node
-    initNode(tree[node], a);
-    return;
-  }
-
-  build_tree(node * 2, a, (a + b) / 2); // Init left child
-  build_tree(node * 2 + 1, 1 + (a + b) / 2, b); // Init right child
-
-  combineNode(tree[node], tree[node * 2], tree[node * 2 + 1]);
-}
-
-/*
- * Clear lazy/update tree
- */
-void clear_update(int node, int a, int b) {
-  lazy[node] = STUpdate();
-  if (a == b) { // Leaf node
-    return;
-  }
-  clear_update(node * 2, a, (a + b) / 2); // left child
-  clear_update(node * 2 + 1, 1 + (a + b) / 2, b); // right child
-}
-
-/**
-* Query tree
-*/
-STNode query_tree(int node, int a, int b, int i, int j) {
-
-  if (a > j || b < i) return STNode(); // Out of range
-
-  if (lazy[node]) { // This node needs to be updated
-    applyUpdate(tree[node], b - a + 1, lazy[node]);
-
-    if (a != b) {
-      addUpdate(lazy[node * 2], lazy[node]);
-      addUpdate(lazy[node * 2 + 1], lazy[node]);
+    if(sz > 1) { // update lazy[i]
+      if (change == 1 || change == 2)
+        lazy[i] = change;
+      else {
+        lazy[i] = 3 - lazy[i];
+      }
     }
-
-    lazy[node] = STUpdate();
   }
 
-  if (a >= i && b <= j) // Current segment is totally within range [i, j]
-    return tree[node];
-
-  STNode res;
-  STNode q1 = query_tree(node * 2, a, (a + b) / 2, i, j); // Query left child
-  STNode q2 = query_tree(1 + node * 2, 1 + (a + b) / 2, b, i, j); // Query right child
-
-  combineNode(res, q1, q2);
-  return res;
-}
-
-/**
-* update tree
-*/
-void update_tree(int node, int a, int b, int i, int j, STUpdate update) {
-  if (a > j || b < i) // Current segment is not within range [i, j]
-    return;
-
-  if (a >= i && b <= j) { // Segment is fully within range
-    addUpdate(lazy[node], update);
-    return;
+  void init(int _n) { // init all to default value
+    n = _n;
+    int sz = 1;
+    while(sz < n) sz <<= 1;
+    st.assign(sz << 1, T());
+    lazy.assign(sz, AD());
   }
 
-  if (lazy[node]) {
-    addUpdate(lazy[node * 2], lazy[node]);
-    addUpdate(lazy[node * 2 + 1], lazy[node]);
-    lazy[node] = STUpdate();
+  void init(T* a, int _n) {
+    init(_n);
+    _build(1, 0, n-1, a);
   }
 
-  update_tree(node * 2, a, (a + b) / 2, i, j, update); // Updating left child
-  update_tree(1 + node * 2, 1 + (a + b) / 2, b, i, j, update); // Updating right child
+  void _build(int i, int l, int r, T* a) {
+    if(l == r) {
+      st[i] = a[l];
+      return;
+    }
+    int m = l + r >> 1;
+    _build(i << 1, l, m, a);
+    _build(i << 1 | 1, m+1, r, a);
+    st[i] = combine(st[i << 1], st[i << 1 | 1]);
+  }
 
-  STNode q1 = query_tree(node * 2, a, (a + b) / 2, a, b); // Query left child for full
-  STNode q2 = query_tree(1 + node * 2, 1 + (a + b) / 2, b, a, b); // Query right child for full
-  combineNode(tree[node], q1, q2);
-}
+  void _push(int i, int l, int m, int r) { // l != r
+    if(!lazy[i]) return;
+    add(i << 1, m - l + 1, lazy[i]);
+    add(i << 1 | 1, r - m, lazy[i]);
+    lazy[i] = T();
+  }
+
+  T query(int a, int b) {
+    return _query(1, 0, n-1, a, b);
+  }
+
+  T _query(int i, int l, int r, int a, int b) {
+    if(b < l || a > r) return T();
+    if(l >=a && r <= b) return st[i];
+    int m = l + r >> 1;
+    _push(i, l, m, r);
+    return combine(_query(i << 1, l, m, a, b), _query(i << 1 | 1, m+1, r, a, b));
+  }
+
+  void update(int a, int b, AD change) {
+    _update(1, 0, n-1, a, b, change);
+  }
+
+  void _update(int i, int l, int r, int a, int b, AD change) {
+    if(l >= a && r <= b) {
+      add(i, r - l + 1, change);
+      return;
+    }
+    int m = l + r >> 1;
+    _push(i, l, m, r);
+    if(a <= m) _update(i << 1, l, m, a, b, change);
+    if(b > m) _update(i << 1 | 1, m+1, r, a, b, change);
+    st[i] = combine(st[i << 1], st[i << 1 | 1]);
+  }
+
+};
