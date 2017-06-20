@@ -36,20 +36,13 @@ struct STUpdate
   }
 
   void add(const STUpdate& update) {
-    if (update.change == 'F' || update.change == 'E')
+    if (update.change == 1 || update.change == 2)
       change = update.change;
     else {
-      if (change == 0)
-        change = 'I';
-      else if (change == 'I')
-        change = 0;
-      else if (change == 'F')
-        change = 'E';
-      else
-        change = 'F';
+      change = 3 - change;
     }
   }
-  char change;
+  char change; // 0: no change, 1: set to 1, 2: set to 0, 3: toggle
 };
 
 struct STNode
@@ -65,9 +58,9 @@ struct STNode
   }
 
   void applyUpdate(int rangesize, const STUpdate& update) {
-    if (update.change == 'F')
+    if (update.change == 1)
       v = rangesize;
-    else if (update.change == 'E')
+    else if (update.change == 2)
       v = 0;
     else
       v = rangesize - v;
