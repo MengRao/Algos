@@ -1,10 +1,9 @@
 template<int MOD>
 struct ModInt {
-  static const int Mod = MOD;
   unsigned x;
   ModInt() : x(0) { }
   ModInt(signed sig) : x(sig) {  }
-  ModInt(signed long long sig) : x(sig)  { }
+  ModInt(signed long long sig) : x(sig%MOD)  { }
   int get() const { return (int)x; }
   ModInt power(unsigned p) { ModInt res = 1, a = *this; while (p) { if (p & 1) res *= a; a *= a; p >>= 1; } return res; }
 
