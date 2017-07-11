@@ -9,6 +9,11 @@ struct GetID {
   int size() const { return (int)ids.size(); }
   template<typename T>
   int get(T&& x) { return ids.emplace(forward<T>(x), size()).first->second; }
+  template<typename T>
+  int find(T&& x) {
+    auto it = ids.find(forward<T>(x));
+    return it == ids.end() ? -1 : it->second;
+  }
 };
 
 // ID start from 0
@@ -24,6 +29,11 @@ struct GetID2 {
 			values.push_back(ret.first->first);
 		return ret.first->second;
 	}
+	template<typename T>
+	  int find(T&& x) {
+	    auto it = ids.find(forward<T>(x));
+	    return it == ids.end() ? -1 : it->second;
+	  }
 	string& getstr(int id) {
 		return values[id];
 	}
