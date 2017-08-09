@@ -1,4 +1,4 @@
-vector<int> prefixFunction(const string& s) {
+vector<int> PrefixFunction(const string& s) {
     vector<int> p(s.size());
     int j = 0;
     for (int i = 1; i < (int)s.size(); i++) {
