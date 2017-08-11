@@ -58,7 +58,7 @@ struct ST{
     if(!lazy[i]) return;
     add(i << 1, m - l + 1, lazy[i]);
     add(i << 1 | 1, r - m, lazy[i]);
-    lazy[i] = T();
+    lazy[i] = AD();
   }
 
   T query(int a, int b) {
