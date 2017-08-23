@@ -171,6 +171,12 @@ struct BigInteger
 		if (ret.num.empty()) ret.sign = 1;
 		return ret;
 	}
+
+  BigInteger operator-() const { // negative operator
+    BigInteger ret = *this;
+    if(ret.num.size()) ret.sign *= -1;
+    return ret;
+  }
 	
 	BigInteger operator * (const BigInteger &other) const {
 		BigInteger ret;
