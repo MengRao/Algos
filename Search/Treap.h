@@ -1,36 +1,30 @@
-#define LAZY 1
-#define HAS_SIZE 1
-#define HAS_SUM 0 // HAS_SUM depends on HAS_SIZE
+#define LAZY 0
+#define HAS_SIZE 0
+#define KT int
 
 struct node {
-  int prior, key;
+  int prior;
+  KT key;
   node *l = 0;
   node *r = 0;
 #if LAZY
-  int lazy = 0;
+  KT lazy = 0;
 #endif
 #if HAS_SIZE
   int sz = 1;
-#if HAS_SUM
-  int sum;
 #endif
-#endif
+  //KT sum;
   
-  node(int k)
+  node(KT k)
     : prior(rand())
     , key(k) 
-#if HAS_SUM
-    , sum(k)
-#endif
     {}
 
 #if LAZY
-  void add(int ad) {
+  void add(KT ad) {
     lazy += ad;
     key += ad;
-#if HAS_SUM
-    sum += sz * ad;
-#endif
+    //sum += sz * ad;
   }
 #endif
 
@@ -46,22 +40,21 @@ struct node {
   void update(){
 #if HAS_SIZE
     sz = 1;
-#if HAS_SUM
-    sum = key;
 #endif
+    //sum = key;
     if(l) {
+#if HAS_SIZE
       sz += l->sz;
-#if HAS_SUM
-      sum += l->sum;
 #endif
+      //sum += l->sum;
     }
     if(r) {
+#if HAS_SIZE
       sz += r->sz;
-#if HAS_SUM
-      sum += r->sum;
 #endif
+      //sum += r->sum;
     }
-#endif
+
   }
 };
 
@@ -85,7 +78,7 @@ void merge(pnode& p, pnode l, pnode r) {
   }
 }
 
-void split(pnode p, pnode& l, pnode& r, int k) { // splits into < k and >= k
+void split(pnode p, pnode& l, pnode& r, KT k) { // splits into < k and >= k
   if(!p){
     l = r = 0;
     return;
@@ -139,7 +132,7 @@ void insert(pnode& p, pnode n) {
   p->update();
 }
 
-void erase(pnode& p, int k) {
+void erase(pnode& p, KT k) {
   if(!p) return;
   p->push();
   if(p->key == k){
