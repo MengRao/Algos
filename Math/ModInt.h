@@ -10,7 +10,7 @@ struct ModInt {
   ModInt &operator+=(ModInt that) { if ((x += that.x) >= MOD) x -= MOD; return *this; }
   ModInt &operator-=(ModInt that) { if ((x += MOD - that.x) >= MOD) x -= MOD; return *this; }
   ModInt &operator*=(ModInt that) { x = (unsigned long long)x * that.x % MOD; return *this; }
-  ModInt &operator/=(ModInt that) { return (*this) *= that.power(MOD - 2); }
+  ModInt &operator/=(ModInt that) { return (*this) *= that.pow(MOD - 2); }
 
   ModInt operator+(ModInt that) const { return ModInt(*this) += that; }
   ModInt operator-(ModInt that) const { return ModInt(*this) -= that; }
