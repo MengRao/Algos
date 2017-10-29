@@ -53,6 +53,7 @@ struct SAIS {
     buildSA();
     buildLCP();
   }
+  // last element of S should be less than any other elements
   SAIS(vector<int>&& S_, int A_SIZE_) : S(S_), A_SIZE(A_SIZE_) {
     buildSA();
   }
