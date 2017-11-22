@@ -8,29 +8,25 @@ template<typename T1, typename T2> void Min(T1& a, T2 b) { a = min(a, (T1)b); }
 
 const int N = 100;
 
-vector<ll> g[N];
-ll id[N], pid[N], curid;
-stack<ll> st;
+vector<int> g[N];
+int id[N], pid[N], curid;
+stack<int> st;
 bool inst[N];
 
-void dfs(ll i) {
+void scc(int i) {
   id[i] = pid[i] = ++curid;
   st.push(i);
   inst[i] = 1;
   for (auto e : g[i]) {
-    if (!id[e])
-      dfs(e);
-    if (inst[e]) // i and e are in the same SCC that has yet finalized
-      Min(pid[i], pid[e]);
+    if (!id[e]) scc(e);
+    if (inst[e]) Min(pid[i], pid[e]);
     //else finalized SCC pid[e] has incoming edge i
   }
   if (id[i] == pid[i]) {
     // now finalize SCC using i as pid
     while (1) {
-      ll t = st.top();
-      st.pop();
+      auto t = st.top(); st.pop();
       inst[t] = 0;
-      // identify same SCC using idx of least id in the SCC as pid for later use
       pid[t] = i;
       if (t == i) break;
     }
@@ -39,20 +35,15 @@ void dfs(ll i) {
 
 // for directed graph
 void solve() {
-  ll n, m;
+  int n, m, x, y;
   cin >> n >> m;
-  rep(i, n) {
-    g[i].clear();
-    id[i] = 0;
-  }
   while (m--) {
-    ll a, b;
-    cin >> a >> b;
-    g[a].push_back(b);
+    cin >> x >> y;
+    g[x].push_back(y);
   }
-  ll nscc = 0;
+  int nscc = 0;
   rep(i, n) {
-    if (!id[i]) dfs(i);
+    if (!id[i]) scc(i);
     nscc += (i == pid[i]);
   }
   
