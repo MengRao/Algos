@@ -15,18 +15,17 @@ struct ST{
     return a + b;
   }
 
+  // make sure combine(x, defaultT()) == x
+  static T defaultT() {
+    return 0;
+  }
+
   void add(int i, int sz, AD change) {
     // update st[i]
-    if(change==1) st[i] = sz;
-    else if(change==2) st[i] = 0;
-    else st[i] = sz - st[i];
+    st[i] += change;
 
-    if(sz > 1) { // update lazy[i]
-      if (change == 1 || change == 2)
-        lazy[i] = change;
-      else {
-        lazy[i] = 3 - lazy[i];
-      }
+    if (sz > 1) { // update lazy[i]
+      lazy[i] += change;
     }
   }
 
@@ -34,7 +33,7 @@ struct ST{
     n = _n;
     int sz = 1;
     while(sz < n) sz <<= 1;
-    st.assign(sz << 1, T());
+    st.assign(sz << 1, defaultT());
     lazy.assign(sz, AD());
   }
 
@@ -66,7 +65,7 @@ struct ST{
   }
 
   T _query(int i, int l, int r, int a, int b) {
-    if(b < l || a > r) return T();
+    if(b < l || a > r) return defaultT();
     if(l >=a && r <= b) return st[i];
     int m = l + r >> 1;
     _push(i, l, m, r);

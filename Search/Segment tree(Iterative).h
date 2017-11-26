@@ -21,6 +21,11 @@ struct ST {
     return max(a, b);
   }
 
+  // make sure combine(x, defaultT()) == x
+  static T defaultT() {
+    return 0;
+  }
+
   void add(int i, int sz, AD change) {
     // update st[i]
     st[i] += change;
@@ -44,7 +49,7 @@ struct ST {
   void init(int _n) { // init all to default value
     n = _n;
     h = hsb_loc(n) + 1;
-    st.assign(n << 1, T());
+    st.assign(n << 1, defaultT());
     lazy.assign(n, AD());
   }
 
@@ -74,7 +79,7 @@ struct ST {
     r += n;
     push(l);
     push(r);
-    T ret = T();
+    T ret = defaultT();
     for (; l <= r; l >>= 1, r >>= 1) {
       if (l & 1) ret = combine(ret, st[l++]);
       if (!(r & 1)) ret = combine(ret, st[r--]);
