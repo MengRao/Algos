@@ -6,34 +6,34 @@ But it has a much lower constant factor so it's faster than the recursive versio
 In addition, it's more compact in space usage: only N*3 is required including lazy update array.
 
 Usage:
-You have to customize combine() and add() function appropriately.
+You have to customize type T and AD and function combine() and add() appropriately.
 
 */
 
 
-template<typename T, typename AD>
 struct ST {
+  typedef double T;
+  typedef pair<double,double> AD;
+  static constexpr T defaultT = 0;  // make sure combine(x, defaultT) == x
+  static constexpr AD defaultAD = AD(1,0);
+
+  static T combine(T a, T b) {
+    return a + b;
+  }
+
+  void add(int i, int sz, AD ad) {
+    // update st[i]
+    st[i] = st[i]*ad.ft + ad.sd*sz;
+
+    if (sz > 1) { // update lazy[i]
+      lazy[i].ft *= ad.ft;
+      lazy[i].sd = lazy[i].sd * ad.ft + ad.sd;
+    }
+  }
+  // above should be customized
   vector<T> st;
   vector<AD> lazy;
   int n, h;
-
-  static T combine(T a, T b) {
-    return max(a, b);
-  }
-
-  // make sure combine(x, defaultT()) == x
-  static T defaultT() {
-    return 0;
-  }
-
-  void add(int i, int sz, AD change) {
-    // update st[i]
-    st[i] += change;
-
-    if (sz > 1) { // update lazy[i]
-      lazy[i] += change;
-    }
-  }
 
   int hsb_loc(int n) {
 #ifdef WIN32
@@ -45,12 +45,11 @@ struct ST {
 #endif
   }
 
-
   void init(int _n) { // init all to default value
     n = _n;
     h = hsb_loc(n) + 1;
-    st.assign(n << 1, defaultT());
-    lazy.assign(n, AD());
+    st.assign(n << 1, T(defaultT));
+    lazy.assign(n, AD(defaultAD));
   }
 
   void init(T* a, int _n) {
@@ -66,10 +65,10 @@ struct ST {
   void push(int p) {
     for (int s = h; s > 0; --s) {
       int i = p >> s;
-      if (lazy[i]) {
+      if (lazy[i] != defaultAD) {
         add(i << 1, 1 << (s - 1), lazy[i]);
         add(i << 1 | 1, 1 << (s - 1), lazy[i]);
-        lazy[i] = AD();
+        lazy[i] = defaultAD;
       }
     }
   }
@@ -79,7 +78,7 @@ struct ST {
     r += n;
     push(l);
     push(r);
-    T ret = defaultT();
+    T ret = defaultT;
     for (; l <= r; l >>= 1, r >>= 1) {
       if (l & 1) ret = combine(ret, st[l++]);
       if (!(r & 1)) ret = combine(ret, st[r--]);
