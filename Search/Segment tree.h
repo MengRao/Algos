@@ -5,36 +5,36 @@
 */
 
 
-template<typename T, typename AD>
 struct ST{
-  vector<T> st;
-  vector<AD> lazy;
-  int n;
+  typedef double T;
+  typedef pair<double,double> AD;
+  static constexpr T defaultT = 0;  // make sure combine(x, defaultT) == x
+  static constexpr AD defaultAD = AD(1,0);
 
   static T combine(T a, T b) {
     return a + b;
   }
 
-  // make sure combine(x, defaultT()) == x
-  static T defaultT() {
-    return 0;
-  }
-
-  void add(int i, int sz, AD change) {
+  void add(int i, int sz, AD ad) {
     // update st[i]
-    st[i] += change;
+    st[i] = st[i]*ad.ft + ad.sd*sz;
 
     if (sz > 1) { // update lazy[i]
-      lazy[i] += change;
+      lazy[i].ft *= ad.ft;
+      lazy[i].sd = lazy[i].sd * ad.ft + ad.sd;
     }
   }
+  // above should be customized
+  vector<T> st;
+  vector<AD> lazy;
+  int n;
 
   void init(int _n) { // init all to default value
     n = _n;
     int sz = 1;
     while(sz < n) sz <<= 1;
-    st.assign(sz << 1, defaultT());
-    lazy.assign(sz, AD());
+    st.assign(sz << 1, T(defaultT));
+    lazy.assign(sz, AD(defaultAD));
   }
 
   void init(T* a, int _n) {
@@ -54,10 +54,10 @@ struct ST{
   }
 
   void _push(int i, int l, int m, int r) { // l != r
-    if(!lazy[i]) return;
+    if(lazy[i] == defaultAD) return;
     add(i << 1, m - l + 1, lazy[i]);
     add(i << 1 | 1, r - m, lazy[i]);
-    lazy[i] = AD();
+    lazy[i] = defaultAD;
   }
 
   T query(int a, int b) {
@@ -65,7 +65,7 @@ struct ST{
   }
 
   T _query(int i, int l, int r, int a, int b) {
-    if(b < l || a > r) return defaultT();
+    if(b < l || a > r) return defaultT;
     if(l >=a && r <= b) return st[i];
     int m = l + r >> 1;
     _push(i, l, m, r);
