@@ -5,10 +5,12 @@ Math/ModInt.h: A ModInt type to deal with intergers having to mod some number(e.
 
 Graph/max flow.h: A Dinic's implementation for computing max flow
 
-Search/GetID.h: A library to assign strings or objects of other types a unique id
+Search/GetID.h: A library to assign unique id to strings or objects of other types
 
 Search/UnionFind.h: A implemenation of union find disjoint set
 
 Search/Segment tree(Iterative).h: A general purpose segment tree template with lazy propagation(support non-commutative updates)
+
+Search/square root decomposition.h: A general purpose square root decomposition data structure template
 
 Search/Treap.h: A Treap implementation that is configurable with toggles on lazy propagation, supporting size and sum. 
