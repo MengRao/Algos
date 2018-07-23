@@ -1,5 +1,5 @@
 A collection of C++ libraries I've been personally maintaining and using in solving competitive programming problems.
-Some I frequenly used or having high quality are listed as below:
+Some I frequently used or having high quality are listed as below:
 
 Math/ModInt.h: A ModInt type to deal with intergers having to mod some number(e.g 1e9+7)
 
