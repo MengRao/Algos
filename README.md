@@ -14,10 +14,3 @@ Search/Segment tree(Iterative).h: A general purpose segment tree template with l
 Search/square root decomposition.h: A general purpose square root decomposition data structure template
 
 Search/Treap.h: A Treap implementation that is configurable with toggles on lazy propagation, supporting size and sum. 
-
-_inta_  
-*inta*  
-**bold**
-
-abc
----
